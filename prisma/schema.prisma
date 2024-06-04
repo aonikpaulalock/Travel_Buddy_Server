@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Status {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+// User model
+model User {
+  id                 String               @id @default(uuid())
+  name               String
+  email              String               @unique
+  password           String
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  profile            UserProfile?
+  trips              Trip[]
+  TravelBuddyRequest TravelBuddyRequest[]
+
+  @@map("users")
+}
+
+// Trip model
+model Trip {
+  id                  String               @id @default(uuid())
+  userId              String
+  user                User                 @relation(fields: [userId], references: [id])
+  destination         String
+  startDate           String
+  endDate             String
+  budget              Float
+  activities          String[]
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  travelBuddyRequests TravelBuddyRequest[]
+
+  @@map("trips")
+}
+
+// Travel Buddy Request model
+model TravelBuddyRequest {
+  id        String   @id @default(uuid())
+  tripId    String
+  trip      Trip     @relation(fields: [tripId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  status    Status   @default(PENDING)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("travelBuddyRequests")
+}
+
+// UserProfile model
+model UserProfile {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  bio       String
+  age       Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("userProfiles")
+}
