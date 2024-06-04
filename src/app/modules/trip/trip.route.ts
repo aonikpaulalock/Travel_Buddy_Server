@@ -1,27 +1,43 @@
 import express from "express";
-import { tripControllers } from "./trip.controller";
-import { auth } from "../../middleware/auth";
-import validateRequest from "../../middleware/validateRequest";
-import { tripValidations } from "./trip.validation";
-const router = express.Router()
+
+// Assuming you have authentication middleware
+import { tripController } from "./trip.controller";
+import auth from "../../middleWare/auth";
+import validateRequest from "../../middleWare/validateRequest";
+import { tripValidation } from "./trip.validation";
+
+const router = express.Router();
+
+router.post(
+  "/trips",
+  auth(),
+  validateRequest(tripValidation.createTripValidation),
+  tripController.createTrip
+);
+router.get("/trips", tripController.getTripsController);
+
+router.get("/trips/:id", tripController.getSingleTrip);
+
+router.get("/userTrip", auth(), tripController.getUserTrip);
+
+router.post(
+  "/trip/:tripId/request",
+  auth(),
+  tripController.sendRequestController
+);
 
 router.get(
-  '/trips',
-  tripControllers.getAllTripsIntoDB
+  "/travel-buddies",
+  auth(),
+  tripController.getPotentialBuddiesController
 );
 
-router.post(
-  '/trips',
+router.put(
+  "/travel-buddies/:buddyId/respond",
   auth(),
-  validateRequest(tripValidations.createTripValidationSchema),
-  tripControllers.createTripIntoDB
+  tripController.respondToBuddyRequestController
 );
 
-router.post(
-  '/trip/:tripId/request',
-  auth(),
-   validateRequest(tripValidations.createTravelBuddyRequestValidationSchema),
-  tripControllers.sendTravelBuddyRequestIntoDB
-);
+router.delete("/trip/:tripId", auth(), tripController.deleteTrip);
 
 export const tripRoutes = router;

@@ -1,5 +1,8 @@
 -- CreateEnum
-CREATE TYPE "Status" AS ENUM ('PENDING', 'APPROVED', 'REJECTED');
+CREATE TYPE "Status" AS ENUM ('ACTIVE', 'DEACTIVE');
+
+-- CreateEnum
+CREATE TYPE "Role" AS ENUM ('USER', 'ADMIN');
 
 -- CreateTable
 CREATE TABLE "users" (
@@ -7,6 +10,8 @@ CREATE TABLE "users" (
     "name" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
+    "status" "Status" NOT NULL DEFAULT 'ACTIVE',
+    "role" "Role" NOT NULL DEFAULT 'USER',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -18,10 +23,13 @@ CREATE TABLE "trips" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "destination" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
     "startDate" TEXT NOT NULL,
     "endDate" TEXT NOT NULL,
     "budget" DOUBLE PRECISION NOT NULL,
     "activities" TEXT[],
+    "type" TEXT NOT NULL,
+    "photo" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -29,43 +37,43 @@ CREATE TABLE "trips" (
 );
 
 -- CreateTable
-CREATE TABLE "travelBuddyRequests" (
+CREATE TABLE "travelbuddyrequests" (
     "id" TEXT NOT NULL,
     "tripId" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
-    "status" "Status" NOT NULL DEFAULT 'PENDING',
+    "status" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "travelBuddyRequests_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "travelbuddyrequests_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "userProfiles" (
+CREATE TABLE "userprofiles" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
-    "bio" TEXT NOT NULL,
-    "age" INTEGER NOT NULL,
+    "bio" TEXT,
+    "age" INTEGER,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "userProfiles_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "userprofiles_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "userProfiles_userId_key" ON "userProfiles"("userId");
+CREATE UNIQUE INDEX "userprofiles_userId_key" ON "userprofiles"("userId");
 
 -- AddForeignKey
 ALTER TABLE "trips" ADD CONSTRAINT "trips_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "travelBuddyRequests" ADD CONSTRAINT "travelBuddyRequests_tripId_fkey" FOREIGN KEY ("tripId") REFERENCES "trips"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "travelbuddyrequests" ADD CONSTRAINT "travelbuddyrequests_tripId_fkey" FOREIGN KEY ("tripId") REFERENCES "trips"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "travelBuddyRequests" ADD CONSTRAINT "travelBuddyRequests_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "travelbuddyrequests" ADD CONSTRAINT "travelbuddyrequests_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "userProfiles" ADD CONSTRAINT "userProfiles_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "userprofiles" ADD CONSTRAINT "userprofiles_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
