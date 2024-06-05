@@ -1,15 +1,15 @@
-# Travel Buddy Matching App
+# Travel Buddy App
 
 ## Live Demo
 
-## https://assignment-kappa-five.vercel.app/
+## https://travel-buddy-server-two.vercel.app/
 
 ## Getting Started
 
 To set up the Travel Buddy Matching App locally, follow these steps:
 
 1. **Clone the Repository**
-   `https://github.com/Porgramming-Hero-web-course/l2-b2-fullstack-track-assignment-8-aonikpaulalock.git`
+   `https://github.com/aonikpaulalock/Travel_Buddy_Server.git`
 2. **Install Dependencies**: `cd file-Name && npm i / install`
 3. **Set Up Environment Variables**: Create a `.env` file based on the provided `.env.example` file and fill in the necessary configuration.
 4. **Run Migrations**: `npx prisma migrate dev` to apply database migrations.
